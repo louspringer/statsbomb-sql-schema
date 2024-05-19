@@ -1,4 +1,7 @@
-CREATE TABLE teams (
-    team_id INT PRIMARY KEY,
-    team_name VARCHAR(255)
+CREATE SCHEMA IF NOT EXISTS statsbomb_schema;
+USE SCHEMA statsbomb_schema;
+
+CREATE TABLE IF NOT EXISTS teams (
+    team_id INTEGER PRIMARY KEY,
+    team_name STRING
 );

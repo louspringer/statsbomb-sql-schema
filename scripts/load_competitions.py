@@ -1,18 +1,20 @@
-import pandas as pd
 from statsbombpy import sb
-import mysql.connector
+from snowflake_connection import get_connection
 
-conn = mysql.connector.connect(
-    host="localhost",
-    user="yourusername",
-    password="yourpassword",
-    database="statsbomb"
-)
-cursor = conn.cursor()
+# Establish connection
+conn = get_connection()
+cur = conn.cursor()
 
+# Load competitions data
 competitions = sb.competitions()
-competitions.to_sql(name='competitions', con=conn, if_exists='replace', index=False)
 
-conn.commit()
-cursor.close()
+# Insert data into competitions table
+for index, row in competitions.iterrows():
+    cur.execute(
+        "INSERT INTO statsbomb_schema.competitions (competition_id, competition_name, country_name, competition_gender) VALUES (%s, %s, %s, %s)",
+        (row['competition_id'], row['competition_name'], row['country_name'], row['competition_gender'])
+    )
+
+# Close the connection
+cur.close()
 conn.close()

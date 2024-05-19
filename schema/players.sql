@@ -1,8 +1,11 @@
-CREATE TABLE players (
-    player_id INT PRIMARY KEY,
-    player_name VARCHAR(255),
-    nickname VARCHAR(255),
+CREATE SCHEMA IF NOT EXISTS statsbomb_schema;
+USE SCHEMA statsbomb_schema;
+
+CREATE TABLE IF NOT EXISTS players (
+    player_id INTEGER PRIMARY KEY,
+    player_name STRING,
+    nickname STRING,
     birth_date DATE,
-    country_of_birth VARCHAR(255),
-    nationality VARCHAR(255)
+    country_of_birth STRING,
+    nationality STRING
 );

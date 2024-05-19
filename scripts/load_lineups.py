@@ -1,18 +1,20 @@
-import pandas as pd
 from statsbombpy import sb
-import mysql.connector
+from snowflake_connection import get_connection
 
-conn = mysql.connector.connect(
-    host="localhost",
-    user="yourusername",
-    password="yourpassword",
-    database="statsbomb"
-)
-cursor = conn.cursor()
+# Establish connection
+conn = get_connection()
+cur = conn.cursor()
 
+# Load lineups data
 lineups = sb.lineups(match_id=3788741)
-lineups.to_sql(name='lineups', con=conn, if_exists='replace', index=False)
 
-conn.commit()
-cursor.close()
+# Insert data into lineups table
+for index, row in lineups.iterrows():
+    cur.execute(
+        "INSERT INTO statsbomb_schema.lineups (lineup_id, match_id, team_id, player_id, starting_position, jersey_number) VALUES (%s, %s, %s, %s, %s, %s)",
+        (row['lineup_id'], row['match_id'], row['team_id'], row['player_id'], row['starting_position'], row['jersey_number'])
+    )
+
+# Close the connection
+cur.close()
 conn.close()
